@@ -120,12 +120,7 @@ for _, gopls_cmd in ipairs(gopls_cmds) do
     local arguments = { { URI = uri } }
 
     local ft = vim.bo.filetype
-    if
-      ft == 'gomod'
-      or ft == 'gosum'
-      or gopls_cmd_name == 'tidy'
-      or gopls_cmd_name == 'update_go_sum'
-    then
+    if ft == 'gomod' or ft == 'gosum' or gopls_cmd_name == 'tidy' or gopls_cmd_name == 'update_go_sum' then
       arguments[1].URIs = { uri }
       arguments[1].URI = nil
     end
@@ -309,8 +304,7 @@ end
 local range_format = 'textDocument/rangeFormatting'
 local formatting = 'textDocument/formatting'
 M.setups = function()
-  local update_in_insert = _GO_NVIM_CFG.diagnostic and _GO_NVIM_CFG.diagnostic.update_in_insert
-    or false
+  local update_in_insert = _GO_NVIM_CFG.diagnostic and _GO_NVIM_CFG.diagnostic.update_in_insert or false
   local diagTrigger = update_in_insert and 'Edit' or 'Save'
   local diagDelay = update_in_insert and '1s' or '250ms'
   local setups = {
@@ -435,6 +429,9 @@ M.setups = function()
         rangeVariableTypes = true,
       },
     })
+  end
+  if setups.settings ~= nil and setups.settings.gopls ~= nil and setups.settings.gopls.hints ~= nil then
+    setups.setting.gopls.hints = vim.json.decode(vim.json.encode(setups.settings.gopls.hints))
   end
   return setups
 end
